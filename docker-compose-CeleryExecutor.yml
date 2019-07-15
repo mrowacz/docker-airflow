@@ -10,10 +10,6 @@ services:
             - POSTGRES_USER=airflow
             - POSTGRES_PASSWORD=airflow
             - POSTGRES_DB=airflow
-        # Uncomment these lines to persist data on the local filesystem.
-        #     - PGDATA=/var/lib/postgresql/data/pgdata
-        # volumes:
-        #     - ./pgdata:/var/lib/postgresql/data/pgdata
 
     webserver:
         image: puckel/docker-airflow:1.10.3
@@ -31,8 +27,7 @@ services:
             # - REDIS_PASSWORD=redispass
         volumes:
             - ./dags:/usr/local/airflow/dags
-            # Uncomment to include custom plugins
-            # - ./plugins:/usr/local/airflow/plugins
+            - ./plugins:/usr/local/airflow/plugins
         ports:
             - "8080:8080"
         command: webserver
@@ -61,8 +56,7 @@ services:
             - webserver
         volumes:
             - ./dags:/usr/local/airflow/dags
-            # Uncomment to include custom plugins
-            # - ./plugins:/usr/local/airflow/plugins
+            - ./plugins:/usr/local/airflow/plugins
         environment:
             - LOAD_EX=n
             - FERNET_KEY=46BKJoQYlPPOexq0OhDZnIlNepKFf87WFwLbfzqDDho=
@@ -80,8 +74,7 @@ services:
             - scheduler
         volumes:
             - ./dags:/usr/local/airflow/dags
-            # Uncomment to include custom plugins
-            # - ./plugins:/usr/local/airflow/plugins
+            - ./plugins:/usr/local/airflow/plugins
         environment:
             - FERNET_KEY=46BKJoQYlPPOexq0OhDZnIlNepKFf87WFwLbfzqDDho=
             - EXECUTOR=Celery
@@ -90,3 +83,9 @@ services:
             # - POSTGRES_DB=airflow
             # - REDIS_PASSWORD=redispass
         command: worker
+
+    spark:
+        build:
+            context: docker/livy
+        ports:
+            - "8998:8998"
